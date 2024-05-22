@@ -8,6 +8,11 @@
 #include <functional>
 #include <nlohmann/json.hpp>
 
+/*
+ * Original program: https://github.com/minimistjs/minimist
+ * The original code was licensed under the MIT License -> https://github.com/minimistjs/minimist/blob/main/LICENSE
+ */
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -109,7 +114,7 @@ json minimist(vector<string> args, optional<MinimistOpts> _opts) {
     auto setKey = [&isBooleanKey](json &obj, vector<string> keys, variant<string, int, bool> value) {
         json *o = &obj;
         if (keys.size() < 1) return;
-        for (int i = 0; i < keys.size() - 1; i++) {
+        for (size_t i = 0; i < keys.size() - 1; i++) {
             string key = keys[i];
             if (!o->contains(key)) (*o)[key] = json();
             o = &o->at(key);
@@ -170,11 +175,11 @@ json minimist(vector<string> args, optional<MinimistOpts> _opts) {
     };
 
     auto indexOf = [](vector<string> v, string s) {
-        int i = 0;
-        for (; i < v.size(); i++) {
+        long i = 0;
+        for (; i < (long)v.size(); i++) {
             if (v[i] == s) break;
         }
-        if (v.size() <= i || v[i] != s) return -1;
+        if ((long)v.size() <= i || v[i] != s) return -1L;
         return i;
     };
     for (auto &&[first, second] : flags.bools) {
@@ -191,7 +196,7 @@ json minimist(vector<string> args, optional<MinimistOpts> _opts) {
         args = vector<string>(args.begin(), args.begin() + ddIdx);
     }
 
-    for (int i = 0; i < args.size(); i++) {
+    for (size_t i = 0; i < args.size(); i++) {
         string arg = args[i];
         string key;
         string next;
@@ -240,7 +245,7 @@ json minimist(vector<string> args, optional<MinimistOpts> _opts) {
             }
 
             bool broken = false;
-            for (int j = 0; j < letters.size(); j++) {
+            for (size_t j = 0; j < letters.size(); j++) {
                 next = string(arg.begin() + j + 2, arg.end());
 
                 if (next == "-") {

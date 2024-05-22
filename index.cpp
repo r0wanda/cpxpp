@@ -1,10 +1,12 @@
 #include <set>
 #include <iostream>
 #include <optional>
+#include <variant>
 #include <type_traits>
 #include <nlohmann/json.hpp>
 #include "help.hpp"
-#include "subarg/minimist.hpp"
+#include "pkgs/shellq.hpp"
+#include "pkgs/minimist.hpp"
 
 using namespace std;
 using json = nlohmann::json;
@@ -63,7 +65,7 @@ int main(int argc, char **argv) {
 
     if (unknowns.size() > 0) {
         cerr << "Unknown option(s): ";
-        int i = 0;
+        size_t i = 0;
         for (string o : unknowns) {
             cerr << o;
             if (i < unknowns.size() - 1) cerr << ", ";
@@ -80,7 +82,14 @@ int main(int argc, char **argv) {
         cerr <<  "Missing either source or dest options" << endl;
         code = 1;
     } else {
-        
+        initToken();
+        json env = {
+            {"PWD", "/home/robot"}
+        };
+        env_t _env = env;
+        auto res = parseShq("a \"b c\" \\$def 'it\\'s great'", &_env, nullopt);
+        json j = *get_if<json>(&res);
+        cout << j.dump() << endl;
     }
 
     return code;
